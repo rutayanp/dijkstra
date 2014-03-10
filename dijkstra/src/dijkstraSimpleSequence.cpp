@@ -4,28 +4,19 @@
 * Version     :
 * Copyright   : Please don't use it for assignments
 * Description : Dijkstra's shortest path algorithm
+* Time			: O(n^2)
 *============================================================================*/
 
-#include <iostream>
-#include <string.h>
+#include "graph.cpp"
+#define DEBUG
 
-using namespace std;
+#ifdef DEBUG
+#include <iostream>
+
+//using namespace std;
 
 enum state { visited, unvisited };
-
-int * generateGraph(int n){
-	int graph[81] = {0, 4, 0, 0, 0, 0, 0, 8, 0,
-			         4, 0, 8, 0, 0, 0, 0, 11, 0,
-	                 0, 8, 0, 7, 0, 4, 0, 0, 2,
-	                 0, 0, 7, 0, 9, 14, 0, 0, 0,
-	                 0, 0, 0, 9, 0, 10, 0, 0, 0,
-	                 0, 0, 4, 0, 10, 0, 2, 0, 0,
-	                 0, 0, 0, 14, 0, 2, 0, 1, 6,
-	                 8, 11, 0, 0, 0, 0, 1, 0, 7,
-	                 0, 0, 2, 0, 0, 0, 6, 7, 0};
-
-	return graph;
-}
+#endif
 
 int removeMin(int *dist, state *isvisited, int n){
 
@@ -38,13 +29,14 @@ int removeMin(int *dist, state *isvisited, int n){
 			min_index = i;
 		}
 	}
-	cout << min << endl;
+	cout << min_index << endl;
 	return min_index;
 }
 
-void stpSimpleSequence(int n, int x){
+void stpSimpleSequence(int n, int x, float d){
 
-	int *graph = generateGraph(n); //to store the edges //implement the function
+	graph *g = new graph(n, d); //to store the edges //implement the function
+	g->createGraph();
 	int *dist = new int[n];
 	state *isvisited = new state[n];
 	int u;
@@ -59,9 +51,10 @@ void stpSimpleSequence(int n, int x){
 	for(int i = 0; i < n; i++){
 		u = removeMin(dist, isvisited, n); //implementation required
 		isvisited[u] = visited;
-		for(int v = 0; v < n; v++){
-			if((graph[u * n + v] != 0) && (isvisited[v] == unvisited) && (dist[v] >= (dist[u] + graph[u * n + v]))){
-				dist[v] = dist[u] + graph[u * n + v];
+		for(map<int, int>::iterator v = g->list[u].neighbors.begin(); v != g->list[u].neighbors.end(); v++){
+			cout << u << "-->" << v->first << " weight : " << v->second << endl;
+			if(isvisited[v->first] == unvisited && (dist[v->first] > dist[u] + g->findWeight(u, v->first))){
+				dist[v->first] = dist[u] + g->findWeight(u, v->first);
 			}
 		}
 
@@ -72,19 +65,14 @@ void stpSimpleSequence(int n, int x){
 	}
 }
 
+
 int main(int argc, char *argv[]) {
 
-	int n;
-	int d;
-	int x; //starting node
-	/*if(strcmp(argv[1], "-r") == 0){
+	int n = 9;
+	float d = 25;
+//	int e = 9;
+//	int x = 0; //starting node
 
-	} else if (strcmp(argv[1], "-s")){
-
-	} else if (strcmp(argv[1], "-f")){
-
-	}*/
-
-	stpSimpleSequence(9, 0);
+	stpSimpleSequence(n, 0, d);
 	return 0;
 }
