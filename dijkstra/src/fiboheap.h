@@ -22,6 +22,9 @@ public:
 	int degree;
 	bool childCut;
 	fnode(int);
+	~fnode();
+	void insertRight(fnode *);
+	void link(fnode *);
 };
 
 class fiboHeap{
@@ -36,6 +39,9 @@ public:
 	int getMinKey();
 	fnode *getMin();
 	int numNodes();
+	fnode *removeMin();
+	void consolidate();
+
 
 };
 
