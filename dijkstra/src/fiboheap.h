@@ -41,8 +41,7 @@ public:
 	int numNodes();
 	fnode *removeMin();
 	void consolidate();
-
-
+	void display();
 };
 
 #endif /* FIBOHEAP_H_ */

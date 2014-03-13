@@ -83,9 +83,10 @@ fnode * fiboHeap::removeMin(){
 
 void fiboHeap::consolidate(){
 	
-	int D = log(nH) / log(2);
+	int D = ceil(log(nH) / log(2));
 	int d = 0; //degree
-	cout << "D : " << D << endl;
+	
+	//cout << "D : " << D << "min : "<<  min->key <<endl;
 	fnode *A[D];
 
 	for(int i = 0; i < D; i++)
@@ -98,11 +99,12 @@ void fiboHeap::consolidate(){
 
 	do{
 		x = traverse;
-		traverse= traverse->right;
+		
 		d = x->degree;
-
+		//cout << "x: " << x->key << "degree in D : " << d << endl;
 		while (A[d] != NULL){
 			y = A[d];
+			//cout << "(in while)y key : " << y->key << ", x : " << x->key << endl;
 			if(x->key > y->key){
 				temp = x;
 				x = y;
@@ -112,12 +114,15 @@ void fiboHeap::consolidate(){
 			if(y == min)	//min should always point something in root list so that the do-while loop terminates
 				min = x;
 
+			//cout << "(in while)key before link : " << y->key << ", min : " << min->key <<endl;
 			x->link(y);
 			A[d] = NULL;
 			d = d + 1;
+			//cout << "(in while) after link degree : " << d << "x : " << x->key<< endl;
 		}
 		
 		A[d] = x;
+		traverse= x->right;
 	}while(traverse != NULL && traverse != min);
 
 	min = NULL; 
@@ -134,19 +139,41 @@ void fiboHeap::consolidate(){
 
 }
 
+void fiboHeap::display(){ //needs to be enhanced
+	fnode *traverse;
+	if(min != NULL){
+		traverse = min;
+		cout << "root list : ";
+		do{
+			cout << traverse->key << "-->" ;
+			traverse = traverse->right;
+		}while(traverse != min);
+		cout << traverse->key << endl;
+	}
+}
+
 
 int main(){
 	fiboHeap *fh = new fiboHeap();
 	fh->insert(10);
-	fh->insert(1);
+	fh->insert(3);
 	fh->insert(2);
-	//fh->insert(0);
-	//fh->insert(6);
-	cout << fh->getMinKey() << endl;
-	cout << fh->numNodes() << endl;
+	fh->insert(1);
+	fh->insert(3);
+	fh->insert(0);
+	fh->insert(4);
+	fh->insert(5);
+	fh->display();
+	cout << "min value: " << fh->getMinKey() << endl;
+	cout << "No. of nodes before removeMin : " << fh->numNodes() << endl;
 	fnode *min = fh->removeMin();
 	cout << "remove min: " << min->key <<endl;
 	cout << "new min : " << fh->getMinKey() << endl;
 	cout << "total elements now : " << fh->numNodes() << endl;
+	min = fh->removeMin();
+	cout << "remove min: " << min->key <<endl;
+	cout << "new min : " << fh->getMinKey() << endl;
+	cout << "total elements now : " << fh->numNodes() << endl;
+	fh->display();
 	return 0;
 }
