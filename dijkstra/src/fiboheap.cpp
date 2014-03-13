@@ -139,7 +139,61 @@ void fiboHeap::consolidate(){
 
 }
 
-void fiboHeap::display(){ //needs to be enhanced
+fnode * fiboHeap::find(int index){
+
+}
+
+void fiboHeap::decreaseKey(fnode *x, int k){
+	if(x->key < k)
+		throw "ERROR: new key greater than the old key";
+	if(min == NULL)
+		throw "ERROR: HEAP EMPTY";
+
+	x->key = k;
+	if(x->parent == NULL || x->key > (x->parent)->key) //if x is a node in the root list or key(x) > key(parent of x)
+		return;
+
+	cut(x);
+	cascadeCut(x->parent);
+	
+	if(min->key > x->key)
+		min = x;
+}
+
+void fiboHeap::cut(fnode *x){
+	fnode *y;
+	if(y->child == x){
+		if(x->right == x)
+			y->child = NULL;
+		else
+			y->child = x->right;
+	}
+
+	x->right->left = x->left; //to remove the node from the link
+	x->left->right = x->right;	
+	y->degree -= 1; //decrease the degree of the parent after the child is removed
+
+	min->insertRight(x);	
+	x->parent = NULL;
+	x->childCut = false;
+}
+
+void fiboHeap::cascadeCut(fnode *y){
+	fnode *z = y->parent;
+	if(z == NULL) //base case : if the node is in the root list
+		return; 
+
+	if(z != NULL){
+		if(y->childCut == false){
+			y->childCut = true;
+		} else {
+			cut(y);
+			cascadeCut(z); //call recursively progressing up towards the root list
+		}
+	}
+}
+
+void fiboHeap::display(){ //needs to be enhanced displays only the root list
 	fnode *traverse;
 	if(min != NULL){
 		traverse = min;
@@ -155,14 +209,14 @@ void fiboHeap::display(){ //needs to be enhanced
 
 int main(){
 	fiboHeap *fh = new fiboHeap();
-	fh->insert(10);
-	fh->insert(3);
-	fh->insert(2);
-	fh->insert(1);
-	fh->insert(3);
-	fh->insert(0);
-	fh->insert(4);
-	fh->insert(5);
+	fh->insert(10, 0);
+	fh->insert(3, 1);
+	fh->insert(2, 3);
+	fh->insert(1, 4);
+	fh->insert(3, 5);
+	fh->insert(0, 6);
+	fh->insert(4, 7);
+	fh->insert(5, 8);
 	fh->display();
 	cout << "min value: " << fh->getMinKey() << endl;
 	cout << "No. of nodes before removeMin : " << fh->numNodes() << endl;

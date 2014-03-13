@@ -42,6 +42,9 @@ public:
 	fnode *removeMin();
 	void consolidate();
 	void display();
+	void decreaseKey(fnode *, int);
+	void cut(fnode *);
+	void cascadeCut(fnode *);
 };
 
 #endif /* FIBOHEAP_H_ */
