@@ -10,19 +10,21 @@
 //#include "fiboNode.h"
 #include <iostream>
 #include <cstddef>
+#include <vector>
 
 class fnode{
 	
 public:
 	int key;
+	int index;
 	fnode *left;
 	fnode *right;
 	fnode *parent;
 	fnode *child;
 	int degree;
 	bool childCut;
-	fnode(int);
-	~fnode();
+	fnode(int, int);
+	void delNode();
 	void insertRight(fnode *);
 	void link(fnode *);
 };
@@ -33,16 +35,19 @@ class fiboHeap{
 	int nH;
 
 public:
+	std::vector<fnode *> nodeaddress;
 	fiboHeap();
 	void insert(fnode *);
-	void insert(int);
+	void insert(int, int);
 	int getMinKey();
+	int getMinIndex();
+	int getKey(int);
 	fnode *getMin();
 	int numNodes();
-	fnode *removeMin();
+	void removeMin();
 	void consolidate();
 	void display();
-	void decreaseKey(fnode *, int);
+	void decreaseKey(int, int);
 	void cut(fnode *);
 	void cascadeCut(fnode *);
 };

@@ -12,9 +12,9 @@
 
 using namespace std;
 
-fnode::fnode(int k, int index){
+fnode::fnode(int ind, int k){
 	key = k;
-	index = 0;
+	index = ind;
 	degree = 0;
 	left = this;
 	right = this;
@@ -23,7 +23,7 @@ fnode::fnode(int k, int index){
 	childCut = false;
 }
 
-fnode::~fnode(){
+void fnode::delNode(){
 	parent = NULL;
 	child = NULL;
 	left = NULL;
@@ -53,25 +53,6 @@ void fnode::link(fnode *f){
 	}
 	f->childCut = false;
 	this->degree += 1;
-}
-
-fnode* fnode::findinSubtree(fnode *x, int index){
-	fnode *res_node = NULL;
-	fnode *traverse = NULL;
-	if(x == NULL)
-		return NULL;
-
-	if(x->index == index)
-		return x;
-
-	traverse = x->child;
-	while(traverse != x->child){
-		res_node = findinSubtree(traverse, index);
-		if(res_node != NULL)
-			return res_node;
-		traverse = traverse->right;
-	}
-
 }
 
 /*int main(){

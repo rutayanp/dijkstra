@@ -7,7 +7,10 @@
 * Time			: O(n^2)
 *============================================================================*/
 
+#ifndef GRAPH_H_
+#define GRAPH_H_
 #include "graph.cpp"
+#endif
 #define DEBUG
 
 #ifdef DEBUG
@@ -29,14 +32,12 @@ int removeMin(int *dist, state *isvisited, int n){
 			min_index = i;
 		}
 	}
-	cout << min_index << endl;
+	//cout << min_index << endl;
 	return min_index;
 }
 
-void stpSimpleSequence(int n, int x, float d){
+void stpSimpleSequence(graph *g, int n, int x, float d){
 
-	graph *g = new graph(n, d); //to store the edges //implement the function
-	g->createGraph();
 	int *dist = new int[n];
 	state *isvisited = new state[n];
 	int u;
@@ -52,7 +53,7 @@ void stpSimpleSequence(int n, int x, float d){
 		u = removeMin(dist, isvisited, n); //implementation required
 		isvisited[u] = visited;
 		for(map<int, int>::iterator v = g->list[u].neighbors.begin(); v != g->list[u].neighbors.end(); v++){
-			cout << u << "-->" << v->first << " weight : " << v->second << endl;
+			//cout << u << "-->" << v->first << " weight : " << v->second << endl;
 			if(isvisited[v->first] == unvisited && (dist[v->first] > dist[u] + g->findWeight(u, v->first))){
 				dist[v->first] = dist[u] + g->findWeight(u, v->first);
 			}
@@ -66,7 +67,7 @@ void stpSimpleSequence(int n, int x, float d){
 }
 
 
-int main(int argc, char *argv[]) {
+/*int main(int argc, char *argv[]) {
 
 	int n = 9;
 	float d = 25;
@@ -75,4 +76,4 @@ int main(int argc, char *argv[]) {
 
 	stpSimpleSequence(n, 0, d);
 	return 0;
-}
+}*/

@@ -1,7 +1,10 @@
 #include "fiboHeap.h"
 #include <cstddef>
 #include <math.h>
-
+#ifndef VECTOR_H_
+#define VECTOR_H_
+#include <vector>
+#endif
 #define DEBUG
 
 #ifdef DEBUG
@@ -18,6 +21,14 @@ int fiboHeap::getMinKey(){
 	return min->key;
 }
 
+int fiboHeap::getMinIndex(){
+	return min->index;
+}
+
+int fiboHeap::getKey(int index){
+	return nodeaddress[index]->key;
+}
+
 fnode * fiboHeap::getMin(){
 	return min;
 }
@@ -26,8 +37,10 @@ int fiboHeap::numNodes(){
 	return nH;
 }
 
-void fiboHeap::insert(int key){
-	insert(new fnode(key));
+void fiboHeap::insert(int index, int key){
+	fnode *f = new fnode(index, key);
+	insert(f);
+	nodeaddress.push_back(f);
 }
 
 void fiboHeap::insert(fnode *f){
@@ -36,14 +49,14 @@ void fiboHeap::insert(fnode *f){
 		nH = 0;
 	} else {
 		min->insertRight(f);
-		
+	
 		if(min->key > f->key)
 			min = f;
 	}
 	nH = nH + 1;
 }
 
-fnode * fiboHeap::removeMin(){
+void fiboHeap::removeMin(){
 	fnode *z = min;
 	fnode *traverse;
 	fnode *x;
@@ -51,7 +64,7 @@ fnode * fiboHeap::removeMin(){
 	if(z != NULL)
 		traverse = z->child;
 	else
-		return NULL;
+		return;
 
 	if(traverse != NULL){
 		do{
@@ -77,8 +90,7 @@ fnode * fiboHeap::removeMin(){
 	}
 
 	nH = nH - 1;
-	delete z;
-	return z;
+	z->delNode();
 }
 
 void fiboHeap::consolidate(){
@@ -139,29 +151,26 @@ void fiboHeap::consolidate(){
 
 }
 
-fnode * fiboHeap::find(int index){
-
-}
-
-void fiboHeap::decreaseKey(fnode *x, int k){
+void fiboHeap::decreaseKey(int index, int k){
+	fnode *x = nodeaddress[index];
+	fnode *y = x->parent;
 	if(x->key < k)
 		throw "ERROR: new key greater than the old key";
 	if(min == NULL)
 		throw "ERROR: HEAP EMPTY";
 
 	x->key = k;
-	if(x->parent == NULL || x->key > (x->parent)->key) //if x is a node in the root list or key(x) > key(parent of x)
-		return;
-
-	cut(x);
-	cascadeCut(x->parent);
+	if(x->parent != NULL && x->key < (x->parent)->key){ //if x is a node in the root list or key(x) > key(parent of x)
+		cut(x);
+		cascadeCut(y);
+	}
 	
 	if(min->key > x->key)
 		min = x;
 }
 
 void fiboHeap::cut(fnode *x){
-	fnode *y;
+	fnode *y = x->parent;
 	if(y->child == x){
 		if(x->right == x)
 			y->child = NULL;
@@ -199,24 +208,24 @@ void fiboHeap::display(){ //needs to be enhanced displays only the root list
 		traverse = min;
 		cout << "root list : ";
 		do{
-			cout << traverse->key << "-->" ;
+			cout << traverse->key <<"(" << traverse->index << ")" << "-->" ;
 			traverse = traverse->right;
 		}while(traverse != min);
-		cout << traverse->key << endl;
+		//cout << traverse->key << endl;
 	}
 }
 
 
-int main(){
+/*int main(){
 	fiboHeap *fh = new fiboHeap();
-	fh->insert(10, 0);
-	fh->insert(3, 1);
-	fh->insert(2, 3);
-	fh->insert(1, 4);
-	fh->insert(3, 5);
-	fh->insert(0, 6);
-	fh->insert(4, 7);
-	fh->insert(5, 8);
+	fh->insert(10);
+	fh->insert(3);
+	fh->insert(2);
+	fh->insert(1);
+	fh->insert(3);
+	fh->insert(0);
+	fh->insert(4);
+	fh->insert(5);
 	fh->display();
 	cout << "min value: " << fh->getMinKey() << endl;
 	cout << "No. of nodes before removeMin : " << fh->numNodes() << endl;
@@ -229,5 +238,8 @@ int main(){
 	cout << "new min : " << fh->getMinKey() << endl;
 	cout << "total elements now : " << fh->numNodes() << endl;
 	fh->display();
+	fh->decreaseKey(0, 0);
+	cout << "new min : " << fh->getMinKey() << endl;
+	fh->display();
 	return 0;
-}
+}*/
