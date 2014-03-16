@@ -11,7 +11,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include <map>
-
+#include <vector>
+#include <fstream>
+#include <string>
+#include <sstream>
 
 #ifdef DEBUG
 enum state { visited, unvisited };
@@ -37,11 +40,13 @@ public:
 	void printGraph(int);
 	int random(int);
 	int findWeight(int, int);
+	void createGraphFile(vector<vector<int> >&);
 };
 
 graph::graph(int vertices, float density){
 	n = vertices;
 	e = (int)(density * vertices * (vertices - 1) / 200);
+	cout << "edges : " << e << endl;
 	list = new adjListNode[n];
 	for(int i = 0; i < n; i++ ){ //point the next to NULL for each node
 			list[i].dest = i;
@@ -122,16 +127,70 @@ void graph::createGraph(){
 				k = 0;
 			}
 		}
-
 	}while(!isconnected);
+}
+
+void graph::createGraphFile(vector<vector<int> >& graphNodes){
+	int i, j, weight;
+	int k = 0;
+	bool isconnected = true;
+	for(int i = 0; i < e; i++){
+		list[graphNodes[i][0]].neighbors[graphNodes[i][1]] = graphNodes[i][2];
+		list[graphNodes[i][1]].neighbors[graphNodes[i][0]] = graphNodes[i][2];
+		cout << "(" << i << ") " << graphNodes[i][0] << ", " << graphNodes[i][1] << " -- "<< list[graphNodes[i][0]].neighbors[graphNodes[i][1]] <<" ------- ";
+		cout << "(" << i << ") " << graphNodes[i][1] << ", " << graphNodes[i][0] << " -- "<< list[graphNodes[i][1]].neighbors[graphNodes[i][0]] << endl;
+	}
 }
 
 int graph::findWeight(int i, int j){
 	return list[i].neighbors[j];
 }
 
-graph *dijkstraGraph(int n, int d){
-	graph *g = new graph(n, d); //to store the edges //implement the function
+graph *dijkstraGraph(int n, int e){
+	graph *g = new graph(n, e); //to store the edges 
 	g->createGraph();
 	return g;
 }
+
+graph *dijkstraGraph(int n, float d){
+	graph *g = new graph(n, d); //to store the edges 
+	g->createGraph();
+	return g;
+}
+
+void readFile(vector<vector<int> >& graphNodes, string fileName, int & n, int & e){
+	fstream fh;
+	fh.open(fileName);
+	string line;
+	int u, v, weight;
+//	fh>> numlines;
+//	cout << numlines << endl;
+
+	getline(fh, line);
+	istringstream ss(line);
+	cout << line << endl;
+	fh>> n >> e;
+	cout << n << ", " << e << endl;
+
+	for(int i = 0; i < e; i++){
+		fh >> u >> v >> weight;
+		vector<int > temp;
+		temp.push_back(u);
+		temp.push_back(v);
+		temp.push_back(weight);
+		graphNodes.push_back(temp);
+		//cout << graphNodes[i][0] << " " << graphNodes[i][1] << " " << graphNodes[i][2] << endl;
+	}
+}
+
+
+/*int main(){
+	int n = 0;
+	int e = 0;
+	vector<vector<int> > graphNodes;
+	string fileName = "nodeedge.txt";
+	readFile(graphNodes, fileName, n, e);
+	graph *g = new graph(n, e);
+	cout << "\n======\n" << endl;
+	g->createGraphFile(graphNodes);
+}*/
